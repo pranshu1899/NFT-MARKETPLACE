@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sample Hardhat 3 Project (`mocha` and `ethers`)
 
 This project showcases a Hardhat 3 project using `mocha` for tests and the `ethers` library for Ethereum interactions.
@@ -55,3 +56,6 @@ After setting the variable, you can run the deployment with the Sepolia network:
 ```shell
 npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
 ```
+=======
+# NFT-MARKETPLACE
+>>>>>>> eab923232de0584eef5569f90d19be4ad2712b7f
