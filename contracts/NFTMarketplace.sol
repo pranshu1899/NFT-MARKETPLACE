@@ -47,5 +47,11 @@ contract NFTMarketplace {
         );
         delete listings[tokenId];
     }
-    //commit
+    
+    function cancelListing(uint256 tokenId) public {
+        Listing memory listing = listings[tokenId];
+        require(listing.seller != address(0), "not listed");
+        require(listing.seller == msg.sender, "not owner");
+        delete listings[tokenId];
+    }
 }
