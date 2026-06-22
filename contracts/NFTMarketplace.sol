@@ -16,12 +16,32 @@ contract NFTMarketplace {
     constructor(address nftAddress){
         nft = IERC721(nftAddress);
     }
+
+    event NFTListed(
+        uint256 tokenId,
+        address seller, 
+        uint256 price
+    );
+    event NFTSold(
+        uint256 tokenId,
+        address buyer
+    );
+    event NFTCancelled(
+        uint256 tokenId
+    );
+
     function listNFT(uint256 tokenId, uint256 price) public {
         require(price>0, "Prize must be greater than 0" );
         require(nft.ownerOf(tokenId) == msg.sender, "You are not nft owner" );
         require(nft.getApproved(tokenId) == address(this), "Marketplace not approved" );
 
         listings[tokenId] = Listing(msg.sender, price);
+
+        emit NFTListed(
+            tokenId,
+            msg.sender,
+            price
+        );
     }
 
     function buyNFT(uint256 tokenId) public payable {
@@ -46,6 +66,11 @@ contract NFTMarketplace {
             tokenId
         );
         delete listings[tokenId];
+
+        emit NFTSold(
+            tokenId,
+            msg.sender
+        );
     }
     
     function cancelListing(uint256 tokenId) public {
@@ -53,5 +78,9 @@ contract NFTMarketplace {
         require(listing.seller != address(0), "not listed");
         require(listing.seller == msg.sender, "not owner");
         delete listings[tokenId];
+
+        emit NFTCancelled(
+            tokenId
+        );
     }
 }
