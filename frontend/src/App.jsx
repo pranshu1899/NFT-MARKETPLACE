@@ -14,6 +14,11 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
   const [tokenURI, setTokenURI] = useState("");
 
   const [tokenId, setTokenId] = useState("");
+  const [price, setPrice] = useState("");
+
+  // buy
+  const [buyTokenId, setBuyTokenId] = useState("");
+  const [buyPrice, setBuyPrice] = useState("");
 
   const NFT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const MARKETPLACE_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
@@ -51,6 +56,26 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
     );
     await tx.wait();
   }
+  async function listNFT(){
+    const tx = await marketplace.listNFT(
+      NFT_ADDRESS,
+      tokenId,
+      ethers.parseEther(price)
+    );
+    await tx.wait();
+  }
+  async function buyNFT(){
+    const tx = await marketplace.buyNFT(
+      NFT_ADDRESS,
+      buyTokenId,
+      {
+        value: ethers.parseEther(buyPrice)
+      }
+    );
+    await tx.wait();
+
+    alert("NFT Purchased Successfully!!");
+  }
 
   return (
     <div>
@@ -73,6 +98,30 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
         onChange={(e) => setTokenId(e.target.value)}
         />
       <button onClick={approveNFT}>Approve NFT</button>
+
+      <input 
+        type="number"
+        placeholder="Price in ETH"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        />
+      <button onClick={listNFT}>List NFT</button>
+
+      {/* buy */}
+      <input 
+        type="number"
+        placeholder="Token id"
+        value={buyTokenId}
+        onChange={(e) => setBuyTokenId(e.target.value)}
+        />
+      <input 
+        type="number"
+        placeholder="amount to be paid"
+        value={buyPrice}
+        onChange={(e) => setBuyPrice(e.target.value)}
+        />
+      <button onClick={buyNFT}>Buy NFT</button>
+
     </div>
   )
 }
