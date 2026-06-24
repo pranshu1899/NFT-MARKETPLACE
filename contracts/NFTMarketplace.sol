@@ -11,6 +11,15 @@ contract NFTMarketplace {
         uint256 price;
     }
 
+    struct MarketItem {
+        address nftContract;
+        uint256 tokenId;
+        address seller;
+        uint256 price;
+        bool active;
+    }
+    MarketItem[] public allListings;
+
     // mapping(uint256 => Listing) public listings;
     mapping(
         address => 
@@ -53,6 +62,16 @@ contract NFTMarketplace {
 
             listings[nftContract][tokenId] = Listing(msg.sender, price);
 
+            allListings.push(
+                MarketItem(
+                    nftContract,
+                    tokenId,
+                    msg.sender,
+                    price,
+                    true
+                )
+            );
+
             emit NFTListed(
                 nftContract,
                 tokenId,
@@ -88,6 +107,14 @@ contract NFTMarketplace {
                 msg.sender, 
               tokenId
                 );
+            
+            for(uint i=0;i<allListings.length;i++){
+                if(allListings[i].nftContract == nftContract && allListings[i].tokenId == tokenId){
+                    allListings[i].active = false;
+                    break;
+                }
+            }
+
             delete listings[nftContract][tokenId];  
             emit NFTSold(
                 nftContract,
@@ -105,11 +132,23 @@ contract NFTMarketplace {
         Listing memory listing = listings[nftContract][tokenId];
         require(listing.seller != address(0), "not listed");
         require(listing.seller == msg.sender, "not owner");
+
+        for(uint i=0;i<allListings.length;i++){
+                if(allListings[i].nftContract == nftContract && allListings[i].tokenId == tokenId){
+                    allListings[i].active = false;
+                    break;
+                }
+            }
+
         delete listings[nftContract][tokenId];
 
         emit NFTCancelled(
             nftContract,
             tokenId
         );
+    }
+
+    function getAllListings() public view returns (MarketItem[] memory) {
+        return allListings;
     }
 }

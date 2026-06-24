@@ -18,10 +18,19 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
 
   // buy
   const [buyTokenId, setBuyTokenId] = useState("");
-  const [buyPrice, setBuyPrice] = useState("");
+  // const [buyPrice, setBuyPrice] = useState("");
+  // advanced buy
+  const [listingData, setListingData] = useState(null);
+
+  // cancel
+  const [cancelTokenId, setCancelTokenId] = useState("");
+
+  // all listing
+  const [allListings, setAllListings] = useState([]);
 
   const NFT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const MARKETPLACE_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+
   async function connectWallet() {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -43,6 +52,14 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
       signer
     );
     setMarketplace(marketplaceContract);
+
+//     console.log("NFT Address:", NFT_ADDRESS);
+// console.log("Marketplace Address:", MARKETPLACE_ADDRESS);
+
+// const code = await provider.getCode(MARKETPLACE_ADDRESS);
+// console.log(code);
+// window.nft = nftContract;
+// window.marketplace = marketplaceContract;
   }
 
   async function mintNFT(){
@@ -65,16 +82,49 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
     await tx.wait();
   }
   async function buyNFT(){
+
+    const listing = await marketplace.listings(
+      NFT_ADDRESS,
+      buyTokenId
+    );
+    if (listing.price === 0n) {
+        alert("NFT not listed");
+        return;
+      }
+
     const tx = await marketplace.buyNFT(
       NFT_ADDRESS,
       buyTokenId,
       {
-        value: ethers.parseEther(buyPrice)
+        // value: ethers.parseEther(buyPrice)
+        // value: listingData.price
+        value: listing.price
       }
     );
     await tx.wait();
 
     alert("NFT Purchased Successfully!!");
+    setListingData(null);
+  }
+  async function getListing(){
+    const listing = await marketplace.listings(
+      NFT_ADDRESS,
+      buyTokenId
+    );
+    setListingData(listing);
+  }
+  async function cancelListing(){
+    const tx = await marketplace.cancelListing(
+      NFT_ADDRESS,
+      cancelTokenId
+    );
+    await tx.wait();
+    alert("Listing cancelled");
+    setListingData(null);
+  }
+  async function getAllListings() {
+    const listings = await marketplace.getAllListings();
+    setAllListings(listings);
   }
 
   return (
@@ -114,13 +164,47 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
         value={buyTokenId}
         onChange={(e) => setBuyTokenId(e.target.value)}
         />
-      <input 
+      {/* <input 
         type="number"
         placeholder="amount to be paid"
         value={buyPrice}
         onChange={(e) => setBuyPrice(e.target.value)}
-        />
+        /> */}
+      <button onClick={getListing}>Get Listing</button>
+      {listingData && (
+        <div>
+          <p>Seller: {listingData.seller} </p>
+          <p>
+            Price: {ethers.formatEther(listingData.price) }ETH
+          </p>
+        </div>
+      )}
+      {/* Agar listingData null nahi hai -> Tabhi seller aur price show karo */}
+
       <button onClick={buyNFT}>Buy NFT</button>
+
+      {/* cancel */}
+      <input 
+        type="number"
+        placeholder="Token id of cancelation listing"
+        value={cancelTokenId}
+        onChange={(e) => setCancelTokenId(e.target.value)}
+        />
+      <button onClick={cancelListing}>Cancel listing</button>
+
+      <button onClick={getAllListings}>Show All Listings</button>
+      {
+        allListings  
+          .filter(item => item.active)
+          .map((abc) => (
+            <div key={abc.tokenId}>
+              <p>Token Id: {abc.tokenId} </p>
+              <p>Seller: {abc.seller} </p>
+              <p>Price: {ethers.formatEther(abc.price)} ETH </p> 
+            </div>
+          ))
+      }
+      
 
     </div>
   )
