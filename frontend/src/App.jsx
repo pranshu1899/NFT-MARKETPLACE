@@ -28,9 +28,19 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
   // all listing
   const [allListings, setAllListings] = useState([]);
 
+  // convienince feature
+  const [myNFTs, setMyNFTs] = useState([]);
+  // this is pending to learn 
+
   const NFT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const MARKETPLACE_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
+  function ipfsToHttp(ipfsUrl){
+    return ipfsUrl.replace(
+      "ipfs://",
+      "https://gateway.pinata.cloud/ipfs/"
+    );
+  }
   async function connectWallet() {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -126,6 +136,42 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
     const listings = await marketplace.getAllListings();
     setAllListings(listings);
   }
+  // pending 
+  async function getMyNFTs() {
+    if (!wallet) {
+      alert("Connect wallet first");
+      return;
+    }
+
+    const totalNFTs = Number(await nft.nextTokenId());
+    const ownedNFTs = [];
+    
+    for(let i = 0; i < totalNFTs; i++) {
+      
+      const owner = await nft.ownerOf(i);
+      
+      if(owner.toLowerCase() === wallet.toLowerCase()) {
+        const uri = await nft.tokenURI(i);
+
+        if(!uri.startsWith("ipfs://")){
+          continue;
+        }
+        const url = ipfsToHttp(uri);
+        const response = await fetch(url);
+        const metadata = await response.json();
+        console.log(metadata);
+        
+        ownedNFTs.push({
+        tokenId: i,
+        name: metadata.name,
+        description: metadata.description,
+        image: ipfsToHttp(metadata.image)
+      });
+    }
+  }
+  
+  setMyNFTs(ownedNFTs);
+}
 
   return (
     <div>
@@ -193,6 +239,11 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
       <button onClick={cancelListing}>Cancel listing</button>
 
       <button onClick={getAllListings}>Show All Listings</button>
+
+      {/* not learned */}
+      <button onClick={getMyNFTs}>My NFTs</button>
+      {/* till here not done */}
+
       {
         allListings  
           .filter(item => item.active)
@@ -205,6 +256,26 @@ import MarketplaceArtifact from "./contract/NFTMarketplace.json"
           ))
       }
       
+      <h2>My NFTs</h2>
+      {
+        myNFTs.map((item) => (
+        <div key={item.tokenId}>
+          <img
+            src={item.image}
+            alt={item.name}
+            width="200"
+          />
+
+          <h3>{item.name}</h3>
+
+          <p>{item.description}</p>
+
+          <p>Token Id: {item.tokenId}</p>
+        </div>
+        ))
+      }      
+      
+
 
     </div>
   )
