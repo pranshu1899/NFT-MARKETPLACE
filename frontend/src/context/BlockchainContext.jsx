@@ -6,8 +6,8 @@ import MarketplaceArtifact from "../contract/NFTMarketplace.json";
 
 const BlockchainContext = createContext();
 
-const NFT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-const MARKETPLACE_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+const NFT_ADDRESS = "0x303FDc5269c69A9e9577976381880A88746A8fc7";
+const MARKETPLACE_ADDRESS = "0x30B167E6dBDBC19D845fc90fBF886068Af842561";
 
 export function BlockchainProvider({ children }) {
 
