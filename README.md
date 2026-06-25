@@ -1,147 +1,54 @@
 # 🚀 NFT Marketplace DApp
 
-A fully functional decentralized NFT Marketplace built using **Solidity, Hardhat, React, Ethers.js, OpenZeppelin, and IPFS**.
+A fully decentralized NFT Marketplace built on the **Ethereum Sepolia Testnet** where users can mint, list, buy, and manage ERC-721 NFTs. The application integrates **Solidity smart contracts**, **React**, **Ethers.js**, **IPFS**, and **MetaMask** to provide a complete end-to-end Web3 experience.
 
-This DApp allows users to mint NFTs, store metadata on IPFS, list NFTs for sale, purchase NFTs from other users, cancel listings, and manage their NFT collection through an intuitive React frontend.
+> **Live Demo:** https://nft-marketplace-mvt3.vercel.app/
 
 ---
 
-## 📸 Preview
+# 📖 Overview
 
-> UI redesign is currently in progress.
+This project demonstrates the complete workflow of an NFT marketplace, starting from minting NFTs to trading them securely on-chain.
+
+NFT metadata is stored on **IPFS**, ownership is managed through the **ERC-721 standard**, and every marketplace transaction is executed through Ethereum smart contracts.
+
+The project was built to gain practical experience with full-stack Web3 development and smart contract interactions.
 
 ---
 
 # ✨ Features
 
-## 🔗 Wallet Connection
-- Connect MetaMask wallet
-- Display connected wallet address
-- Interact with smart contracts using Ethers.js
+### 🔐 Wallet Integration
 
----
+* Connect using MetaMask
+* Automatic wallet reconnection
+* Ethereum Sepolia support
 
-## 🎨 Mint NFTs
+### 🎨 NFT Minting
 
-- Mint ERC-721 NFTs
-- Automatic Token ID generation
-- Token URI stored on-chain
-- Supports IPFS metadata
+* Mint ERC-721 NFTs
+* Metadata stored on IPFS
+* Image, name, and description fetched dynamically
 
----
+### 🛒 Marketplace
 
-## ☁️ Decentralized Storage
+* List NFTs for sale
+* Buy NFTs securely
+* Cancel active listings
+* Display active marketplace listings
 
-Images and metadata are stored using **IPFS (Pinata)**.
+### 👤 User Dashboard
 
-NFT Metadata includes:
+* View owned NFTs
+* View listed NFTs
+* Manage NFTs directly from the interface
 
-- Name
-- Description
-- Image
-- Attributes (supported)
+### 💻 Modern Frontend
 
----
-
-## 🖼 Metadata Rendering
-
-Instead of displaying only Token URIs, the DApp automatically:
-
-- Fetches metadata from IPFS
-- Displays NFT Image
-- Displays NFT Name
-- Displays Description
-
----
-
-## ✅ NFT Approval
-
-Approve NFTs before listing them on the marketplace.
-
-Uses the standard ERC721 approval mechanism.
-
----
-
-## 💰 List NFTs
-
-Owners can list NFTs by specifying:
-
-- Token ID
-- Price (ETH)
-
-Marketplace verifies:
-
-- NFT Ownership
-- Marketplace Approval
-- Valid Price
-
----
-
-## 🛒 Buy NFTs
-
-Purchase listed NFTs securely.
-
-Features:
-
-- Listing verification
-- Exact ETH payment validation
-- Ownership verification
-- Automatic NFT transfer
-- Automatic ETH transfer to seller
-
----
-
-## ❌ Cancel Listings
-
-NFT owners can cancel active listings anytime.
-
-Marketplace verifies:
-
-- NFT is listed
-- Caller is the original seller
-
----
-
-## 📋 Marketplace Listings
-
-View all active marketplace listings.
-
-Displays:
-
-- Token ID
-- Seller
-- Price
-
-Inactive, sold, or cancelled listings are hidden.
-
----
-
-## 👤 My NFTs
-
-View NFTs owned by the connected wallet.
-
-Displays:
-
-- NFT Image
-- NFT Name
-- Description
-- Token ID
-
-Ownership is verified directly on-chain.
-
----
-
-# ⚙ Smart Contract Features
-
-- ERC721 Standard
-- ERC721URIStorage
-- Multi-NFT Marketplace
-- Listing Mapping
-- Marketplace Events
-- Secure ETH Transfers
-- Ownership Verification
-- Approval Verification
-- Active Listing Tracking
+* Responsive design
+* Clean UI
+* Dynamic blockchain data
+* React Context API for blockchain state management
 
 ---
 
@@ -149,31 +56,34 @@ Ownership is verified directly on-chain.
 
 ### Blockchain
 
-- Solidity
-- Hardhat 3
-- OpenZeppelin Contracts
+* Solidity
+* OpenZeppelin ERC-721
+* Hardhat 3
+* Ethereum Sepolia Testnet
 
 ### Frontend
 
-- React
-- Vite
-- Ethers.js v6
+* React.js
+* React Router
+* Context API
+* CSS3
 
-### Wallet
+### Web3
 
-- MetaMask
+* Ethers.js v6
+* MetaMask
+* IPFS (Pinata)
 
-### Storage
+### Deployment
 
-- IPFS
-- Pinata
+* Vercel
 
 ---
 
 # 📂 Project Structure
 
-```
-NFT Marketplace
+```text
+NFT-MARKETPLACE
 │
 ├── contracts/
 │   ├── MyNFT.sol
@@ -184,118 +94,265 @@ NFT Marketplace
 │
 ├── frontend/
 │   ├── src/
-│   ├── App.jsx
-│   └── contract/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── styles/
+│   │   └── contract/
+│   │
+│   ├── public/
+│   └── package.json
 │
+├── hardhat.config.ts
 └── README.md
 ```
 
 ---
 
-# 🔄 Workflow
+# ⚙️ Smart Contracts
 
-```
+## MyNFT.sol
+
+Implements the ERC-721 NFT standard using OpenZeppelin.
+
+### Responsibilities
+
+* Mint NFTs
+* Store Token URI
+* Manage ownership
+* Handle approvals
+
+---
+
+## NFTMarketplace.sol
+
+Handles all marketplace functionality.
+
+### Responsibilities
+
+* List NFTs
+* Purchase NFTs
+* Cancel Listings
+* Track active marketplace listings
+
+---
+
+# 🔄 DApp Workflow
+
+```text
 Upload Image
-      │
-      ▼
-Upload Image to IPFS
-      │
-      ▼
-Create Metadata.json
-      │
-      ▼
-Upload Metadata to IPFS
-      │
-      ▼
+        │
+        ▼
+      IPFS
+        │
+        ▼
+Create Metadata JSON
+        │
+        ▼
+      IPFS
+        │
+        ▼
 Mint NFT
-      │
-      ▼
-Approve NFT
-      │
-      ▼
+        │
+        ▼
+Approve Marketplace
+        │
+        ▼
 List NFT
-      │
-      ▼
+        │
+        ▼
 Marketplace
-      │
-      ▼
+        │
+        ▼
 Buy NFT
-      │
-      ▼
-Ownership Transfers
+        │
+        ▼
+Ownership Transferred
 ```
 
 ---
 
-# 🚀 Current Status
+# 🖥 Installation
 
-### ✅ Completed
+Clone the repository
 
-- MetaMask Integration
-- ERC721 NFT Contract
-- NFT Minting
-- IPFS Metadata Storage
-- NFT Approval
-- Marketplace Listing
-- Buy NFT
-- Cancel Listing
-- Active Listings
-- My NFTs Dashboard
-- IPFS Metadata Fetching
-- NFT Image Rendering
+```bash
+git clone https://github.com/pranshu1899/NFT-MARKETPLACE.git
+```
 
----
+Move into the project
 
-### 🚧 In Progress
+```bash
+cd NFT-MARKETPLACE
+```
 
-- Multi-page React UI
-- NFT Cards
-- Better Marketplace Design
-- Responsive Layout
-- Improved User Experience
+Install backend dependencies
 
----
+```bash
+npm install
+```
 
-### 📌 Planned Features
+Install frontend dependencies
 
-- Image Upload directly from Frontend
-- Automatic Metadata Generation
-- Search & Filters
-- Sorting
-- Profile Page
-- Wishlist
-- Loading Animations
-- Toast Notifications
-- Sepolia Deployment
-- Live Demo
-- Portfolio Website Integration
+```bash
+cd frontend
+npm install
+```
 
 ---
 
-# 📚 What I Learned
+# Environment Variables
 
-- Building ERC721 Smart Contracts
-- OpenZeppelin Standards
-- Smart Contract Deployment using Hardhat
-- Contract Interaction with Ethers.js
-- MetaMask Integration
-- React State Management
-- NFT Approval Flow
-- NFT Marketplace Logic
-- Secure ETH Transfers
-- IPFS & Pinata Integration
-- Fetching NFT Metadata
-- Rendering NFTs from IPFS
-- Building End-to-End Web3 Applications
+Create a `.env` file in the project root.
+
+```env
+SEPOLIA_RPC_URL=YOUR_RPC_URL
+
+SEPOLIA_PRIVATE_KEY=YOUR_PRIVATE_KEY
+```
 
 ---
 
-# 🔮 Future Scope
+# Deploy Smart Contracts
 
-This project is currently running on a **local Hardhat network** for development and testing.
+Compile contracts
 
-The next milestone is deploying the complete application to the **Sepolia Testnet**, followed by UI improvements and production-ready features to make it resemble modern NFT marketplaces like OpenSea.
+```bash
+npx hardhat compile
+```
+
+Deploy
+
+```bash
+npx hardhat run scripts/deploy.js --network sepolia
+```
+
+After deployment,
+
+* Copy contract addresses
+* Update `BlockchainContext.jsx`
+* Copy latest ABI files into:
+
+```text
+frontend/src/contract/
+```
 
 ---
 
-## ⭐ If you found this project interesting, consider giving it a star!
+# Run Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+# Build
+
+```bash
+npm run build
+```
+
+---
+
+# Screenshots
+
+### Home Page
+
+> Add screenshot here
+
+---
+
+### Marketplace
+
+![alt text](image.png)
+
+---
+
+### Mint NFT
+
+> Add screenshot here
+
+---
+
+### My NFTs
+
+> Add screenshot here
+
+---
+
+# What I Learned
+
+During this project I gained hands-on experience with:
+
+* ERC-721 NFT Standard
+* OpenZeppelin Contracts
+* Smart Contract Development
+* Marketplace Smart Contract Architecture
+* NFT Ownership & Approvals
+* IPFS Metadata Storage
+* MetaMask Integration
+* Ethers.js v6
+* Hardhat 3
+* React Context API
+* Smart Contract Deployment
+* Ethereum Sepolia Testnet
+* Full Stack Web3 Development
+
+---
+
+# Future Improvements
+
+* NFT Search
+* Filters & Sorting
+* Event-based data fetching
+* Transaction history
+* User Profiles
+* Auction functionality
+* Offer System
+* Royalties (ERC-2981)
+* Dark/Light Theme
+* Loading animations
+* Toast notifications
+* Unit & Integration Tests
+
+---
+
+# Challenges Faced
+
+* Understanding ERC-721 ownership and approvals
+* Managing smart contract interactions with Ethers.js v6
+* Handling asynchronous blockchain transactions
+* Fetching decentralized metadata from IPFS
+* Synchronizing frontend state with blockchain data
+* Deploying contracts to Ethereum Sepolia
+* Debugging Linux case-sensitive imports during deployment
+* Managing contract addresses and ABI synchronization
+
+---
+
+# Author
+
+**Pranshu Samadhiya**
+
+GitHub
+
+https://github.com/pranshu1899
+
+LinkedIn
+
+https://www.linkedin.com/in/pranshu-samadhiya-415052380/
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+---
+
+⭐ If you found this project interesting, consider giving it a star on GitHub!
