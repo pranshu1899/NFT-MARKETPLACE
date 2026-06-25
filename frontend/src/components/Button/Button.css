@@ -1,0 +1,57 @@
+.btn{
+    padding:14px 28px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.25s;
+}
+
+.btn-primary{
+
+    background:#e67e22;
+
+    color:white;
+
+}
+
+.btn-primary:hover{
+
+    background:#ff9838;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(230,126,34,.35);
+
+}
+
+.btn-secondary{
+
+    background:#2d3436;
+
+    color:white;
+
+}
+
+.btn-secondary:hover{
+
+    background:#3d4648;
+
+}
+
+.btn:disabled{
+
+    opacity:.5;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+}
