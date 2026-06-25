@@ -1,69 +1,258 @@
 import { useEffect, useState } from "react";
+
 import { useBlockchain } from "../context/BlockchainContext";
+
+import NFTCard from "../components/NFTCard/NFTCard";
+import Modal from "../components/Modal/Modal";
+import Input from "../components/Input/Input";
+import Button from "../components/Button/Button";
+
+import "../styles/mynfts.css";
 
 function MyNFTs() {
 
-  const { getMyNFTs } = useBlockchain();
+  const {
+    getMyNFTs,
+    approveNFT,
+    listNFT,
+  } = useBlockchain();
 
   const [myNFTs, setMyNFTs] = useState([]);
 
-  async function loadNFTs() {
-    const nfts = await getMyNFTs();
-    setMyNFTs(nfts);
-  }
+  const [selectedNFT, setSelectedNFT] = useState(null);
+
+  const [price, setPrice] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+
     loadNFTs();
+
   }, []);
+
+  async function loadNFTs() {
+
+    try {
+
+      const nfts = await getMyNFTs();
+
+      setMyNFTs(nfts);
+
+    } catch (err) {
+
+      console.log(err);
+
+    }
+
+  }
+
+  async function handleApprove() {
+
+    try {
+
+      setLoading(true);
+
+      await approveNFT(selectedNFT.tokenId);
+
+      alert("NFT Approved Successfully");
+
+    } catch (err) {
+
+      alert(err.message);
+
+    }
+
+    setLoading(false);
+
+  }
+
+  async function handleList() {
+
+    try {
+
+      setLoading(true);
+
+      await listNFT(
+        selectedNFT.tokenId,
+        price
+      );
+
+      alert("NFT Listed Successfully");
+
+      setSelectedNFT(null);
+
+      setPrice("");
+
+      loadNFTs();
+
+    } catch (err) {
+
+      alert(err.message);
+
+    }
+
+    setLoading(false);
+
+  }
 
   return (
 
-    <div>
+    <section className="my-nfts">
 
-      <h1>My NFTs</h1>
+      <div className="page-header">
 
-      <button onClick={loadNFTs}>
-        Refresh NFTs
-      </button>
+        <h1>My NFT Collection</h1>
 
-      <br />
-      <br />
+        <p>
 
-      {
-        myNFTs.length === 0 && (
-          <p>No NFTs Found</p>
-        )
-      }
+          Manage all NFTs owned by your wallet.
 
-      {
-        myNFTs.map((item) => (
+        </p>
 
-          <div key={item.tokenId}>
+      </div>
 
-            <img
-              src={item.image}
-              alt={item.name}
-              width="220"
-            />
+      <div className="nft-grid">
 
-            <h3>{item.name}</h3>
+        {
 
-            <p>{item.description}</p>
+          myNFTs.length===0 ?
 
-            <p>
-              Token ID :
-              {" "}
-              {item.tokenId}
+          (
+
+            <h2 className="empty-text">
+
+              No NFTs Found
+
+            </h2>
+
+          )
+
+          :
+
+          (
+
+            myNFTs.map((item)=>(
+
+              <NFTCard
+
+                key={item.tokenId}
+
+                image={item.image}
+
+                name={item.name}
+
+                description={item.description}
+
+                tokenId={item.tokenId}
+
+                buttonText="List NFT"
+
+                onClick={()=>setSelectedNFT(item)}
+
+              />
+
+            ))
+
+          )
+
+        }
+
+      </div>
+
+      <Modal
+
+        open={selectedNFT}
+
+        title="List NFT"
+
+        onClose={()=>{
+          setSelectedNFT(null);
+          setPrice("");
+        }}
+
+      >
+
+        {
+
+          selectedNFT &&
+
+          <>
+
+            <p
+              style={{
+                color:"#999",
+                marginBottom:"20px"
+              }}
+            >
+
+              Token ID : {selectedNFT.tokenId}
+
             </p>
 
-            <hr />
+            <Input
 
-          </div>
+              placeholder="Enter Price in ETH"
 
-        ))
-      }
+              value={price}
 
-    </div>
+              onChange={(e)=>setPrice(e.target.value)}
+
+            />
+
+            <div
+              style={{
+                display:"flex",
+                gap:"15px",
+                marginTop:"25px"
+              }}
+            >
+
+              <Button
+                onClick={handleApprove}
+              >
+
+                {
+
+                  loading ?
+
+                  "Approving..."
+
+                  :
+
+                  "Approve NFT"
+
+                }
+
+              </Button>
+
+              <Button
+                onClick={handleList}
+              >
+
+                {
+
+                  loading ?
+
+                  "Listing..."
+
+                  :
+
+                  "List NFT"
+
+                }
+
+              </Button>
+
+            </div>
+
+          </>
+
+        }
+
+      </Modal>
+
+    </section>
 
   );
 

@@ -1,0 +1,147 @@
+.nft-card{
+
+    background:#181818;
+
+    border:1px solid #282828;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    transition:.3s;
+
+}
+
+.nft-card:hover{
+
+    transform:translateY(-8px);
+
+    border-color:#f39c12;
+
+    box-shadow:0 18px 35px rgba(0,0,0,.45);
+
+}
+
+.image-wrapper{
+
+    overflow:hidden;
+
+}
+
+.nft-image{
+
+    width:100%;
+
+    aspect-ratio:1/1;
+
+    object-fit:cover;
+
+    transition:.45s;
+
+}
+
+.nft-card:hover .nft-image{
+
+    transform:scale(1.05);
+
+}
+
+.nft-content{
+
+    padding:22px;
+
+}
+
+.title-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:14px;
+
+}
+
+.title-row h3{
+
+    color:white;
+
+    font-size:21px;
+
+}
+
+.token-id{
+
+    color:#f39c12;
+
+    font-weight:700;
+
+}
+
+.nft-description{
+
+    color:#969696;
+
+    line-height:1.7;
+
+    min-height:55px;
+
+    margin-bottom:22px;
+
+}
+
+.seller{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    color:#888;
+
+    font-size:14px;
+
+    margin-bottom:18px;
+
+}
+
+.seller span{
+
+    color:#ddd;
+
+}
+
+.price-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:22px;
+
+}
+
+.price-row span{
+
+    color:#888;
+
+}
+
+.price-row h4{
+
+    color:#f39c12;
+
+    font-size:21px;
+
+}
+
+.nft-card .btn{
+
+    width:100%;
+
+}

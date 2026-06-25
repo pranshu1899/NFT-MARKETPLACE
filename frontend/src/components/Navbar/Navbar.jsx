@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useBlockchain } from "../../context/BlockchainContext";
+
+import "./Navbar.css";
 
 function Navbar() {
 
@@ -7,34 +9,67 @@ function Navbar() {
 
   return (
 
-    <nav>
+    <nav className="navbar">
 
-      <Link to="/">Home</Link>
+      <h2 className="logo">
 
-      {" | "}
+        NFT Marketplace
 
-      <Link to="/marketplace">Marketplace</Link>
+      </h2>
 
-      {" | "}
+      <div className="nav-links">
 
-      <Link to="/mint">Mint NFT</Link>
+        <NavLink to="/">
+          Home
+        </NavLink>
 
-      {" | "}
+        <NavLink to="/marketplace">
+          Marketplace
+        </NavLink>
 
-      <Link to="/my-nfts">My NFTs</Link>
+        <NavLink to="/mint">
+          Mint NFT
+        </NavLink>
 
-      <button
-        style={{ marginLeft: "20px" }}
-        onClick={connectWallet}
-      >
-        {wallet
-          ? wallet.slice(0, 6) + "..." + wallet.slice(-4)
-          : "Connect Wallet"}
-      </button>
+        <NavLink to="/my-nfts">
+          My NFTs
+        </NavLink>
+
+        <NavLink to="/listed">
+          Listed
+        </NavLink>
+
+      </div>
+
+      {
+
+        wallet ?
+
+        <div className="wallet-pill">
+
+          <span className="wallet-dot"></span>
+
+          {wallet.slice(0,6)}
+          ...
+          {wallet.slice(-4)}
+
+        </div>
+
+        :
+
+        <button
+          className="connect-btn"
+          onClick={connectWallet}
+        >
+          Connect Wallet
+        </button>
+
+      }
 
     </nav>
 
   );
+
 }
 
 export default Navbar;

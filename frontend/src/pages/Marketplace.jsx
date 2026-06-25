@@ -1,74 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+
 import { useBlockchain } from "../context/BlockchainContext";
+
+import NFTCard from "../components/NFTCard/NFTCard";
+import Input from "../components/Input/Input";
+
+import "../styles/marketplace.css";
 
 function Marketplace() {
 
   const {
-    approveNFT,
-    listNFT,
-    getListing,
-    buyNFT,
-    cancelListing,
     getAllListings,
+    getNFTMetadata,
+    buyNFT,
   } = useBlockchain();
 
-  const [tokenId, setTokenId] = useState("");
-  const [price, setPrice] = useState("");
-
-  const [buyTokenId, setBuyTokenId] = useState("");
-  const [listingData, setListingData] = useState(null);
-
-  const [cancelTokenId, setCancelTokenId] = useState("");
-
   const [allListings, setAllListings] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  async function handleApprove() {
+  useEffect(() => {
+    loadMarketplace();
+  }, []);
+
+  async function loadMarketplace() {
+
     try {
-      await approveNFT(tokenId);
-      alert("NFT Approved");
+
+      setLoading(true);
+
+      const listings = await getAllListings();
+
+      const activeListings = listings.filter(
+        item => item.active
+      );
+
+      const finalNFTs = [];
+
+      for (const item of activeListings) {
+
+        const metadata = await getNFTMetadata(
+          Number(item.tokenId)
+        );
+
+        if (!metadata) continue;
+
+        finalNFTs.push({
+
+          ...metadata,
+
+          seller: item.seller,
+
+          price: ethers.formatEther(item.price),
+
+        });
+
+      }
+
+      setAllListings(finalNFTs);
+
     } catch (err) {
+
       console.log(err);
+
     }
+
+    setLoading(false);
+
   }
 
-  async function handleList() {
-    try {
-      await listNFT(tokenId, price);
-
-      alert("NFT Listed");
-
-      setTokenId("");
-      setPrice("");
-
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function handleGetListing() {
+  async function handleBuy(tokenId) {
 
     try {
 
-      const listing = await getListing(buyTokenId);
+      await buyNFT(tokenId);
 
-      setListingData(listing);
+      alert("NFT Purchased Successfully!");
 
-    } catch (err) {
-      console.log(err);
-    }
-
-  }
-
-  async function handleBuy() {
-
-    try {
-
-      await buyNFT(buyTokenId);
-
-      alert("NFT Purchased");
-
-      setListingData(null);
+      loadMarketplace();
 
     } catch (err) {
 
@@ -78,152 +88,124 @@ function Marketplace() {
 
   }
 
-  async function handleCancel() {
-
-    try {
-
-      await cancelListing(cancelTokenId);
-
-      alert("Listing Cancelled");
-
-      setListingData(null);
-
-    } catch (err) {
-
-      console.log(err);
-
-    }
-
-  }
-
-  async function handleAllListings() {
-
-    try {
-
-      const listings = await getAllListings();
-
-      setAllListings(listings);
-
-    } catch (err) {
-
-      console.log(err);
-
-    }
-
-  }
+  const filteredNFTs = allListings.filter(item =>
+    item.name.toLowerCase().includes(
+      search.toLowerCase()
+    )
+  );
 
   return (
 
-    <div>
+    <section className="marketplace">
 
-      <h1>Marketplace</h1>
+      <div className="market-header">
 
-      <h2>Approve NFT</h2>
+        <div>
 
-      <input
-        type="number"
-        placeholder="Token ID"
-        value={tokenId}
-        onChange={(e) => setTokenId(e.target.value)}
-      />
-
-      <button onClick={handleApprove}>
-        Approve NFT
-      </button>
-
-      <br /><br />
-
-      <input
-        type="text"
-        placeholder="Price in ETH"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-      />
-
-      <button onClick={handleList}>
-        List NFT
-      </button>
-
-      <hr />
-
-      <h2>Buy NFT</h2>
-
-      <input
-        type="number"
-        placeholder="Token ID"
-        value={buyTokenId}
-        onChange={(e) => setBuyTokenId(e.target.value)}
-      />
-
-      <button onClick={handleGetListing}>
-        Get Listing
-      </button>
-
-      {
-        listingData &&
-        <>
-          <p>Seller : {listingData.seller}</p>
+          <h1>Marketplace</h1>
 
           <p>
-            Price : {ethers.formatEther(listingData.price)} ETH
+
+            Browse all NFTs currently listed for sale.
+
           </p>
-        </>
-      }
 
-      <button onClick={handleBuy}>
-        Buy NFT
-      </button>
+        </div>
 
-      <hr />
+        <span className="listing-count">
 
-      <h2>Cancel Listing</h2>
+          {filteredNFTs.length} NFT
+          {filteredNFTs.length !== 1 && "s"}
 
-      <input
-        type="number"
-        placeholder="Token ID"
-        value={cancelTokenId}
-        onChange={(e) => setCancelTokenId(e.target.value)}
-      />
+        </span>
 
-      <button onClick={handleCancel}>
-        Cancel Listing
-      </button>
+      </div>
 
-      <hr />
+      <div className="market-search">
 
-      <button onClick={handleAllListings}>
-        Show All Listings
-      </button>
+        <Input
 
-      <br /><br />
+          placeholder="Search NFT by name..."
+
+          value={search}
+
+          onChange={(e)=>setSearch(e.target.value)}
+
+        />
+
+      </div>
 
       {
-        allListings
-          .filter(item => item.active)
-          .map(item => (
 
-            <div key={item.tokenId}>
+        loading ?
 
-              <h3>Token #{item.tokenId.toString()}</h3>
+        (
 
-              <p>Seller : {item.seller}</p>
+          <h2 className="empty-state">
 
-              <p>
-                Price :
-                {" "}
-                {ethers.formatEther(item.price)}
-                {" "}
-                ETH
-              </p>
+            Loading NFTs...
 
-              <hr />
+          </h2>
 
-            </div>
+        )
 
-          ))
+        :
+
+        filteredNFTs.length===0 ?
+
+        (
+
+          <h2 className="empty-state">
+
+            No NFTs Found
+
+          </h2>
+
+        )
+
+        :
+
+        (
+
+          <div className="market-grid">
+
+            {
+
+              filteredNFTs.map(item=>(
+
+                <NFTCard
+
+                  key={item.tokenId}
+
+                  image={item.image}
+
+                  name={item.name}
+
+                  description={item.description}
+
+                  tokenId={item.tokenId}
+
+                  seller={item.seller}
+
+                  price={item.price}
+
+                  buttonText="Buy NFT"
+
+                  onClick={()=>handleBuy(item.tokenId)}
+
+                />
+
+              ))
+
+            }
+
+          </div>
+
+        )
+
       }
 
-    </div>
+    </section>
 
   );
 

@@ -1,9 +1,10 @@
 import { useState } from "react";
-
 import { useBlockchain } from "../context/BlockchainContext";
 
-import Button from "../components/Button/Button";
 import Input from "../components/Input/Input";
+import Button from "../components/Button/Button";
+
+import "../styles/mint.css";
 
 function Mint() {
 
@@ -33,24 +34,29 @@ function Mint() {
 
   return (
 
-    <div>
+    <section className="mint-page">
 
-      <h1>Mint NFT</h1>
+      <div className="mint-card">
 
-      <Input
-        placeholder="Enter Token URI"
-        value={tokenURI}
-        onChange={(e) => setTokenURI(e.target.value)}
-      />
+        <h1>Mint NFT</h1>
 
-      <br />
-      <br />
+        <p>
+          Upload your metadata URI and mint your NFT on-chain.
+        </p>
 
-      <Button onClick={handleMint}>
-        Mint NFT
-      </Button>
+        <Input
+          placeholder="Enter IPFS Metadata URI"
+          value={tokenURI}
+          onChange={(e)=>setTokenURI(e.target.value)}
+        />
 
-    </div>
+        <Button onClick={handleMint}>
+          Mint NFT
+        </Button>
+
+      </div>
+
+    </section>
 
   );
 
